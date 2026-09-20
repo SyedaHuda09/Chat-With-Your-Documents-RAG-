@@ -1,73 +1,97 @@
 # Financial Document Intelligence RAG
 
-A production-oriented RAG application for asking grounded questions over financial PDFs.
+A production-oriented Retrieval-Augmented Generation (RAG) system for asking grounded questions over financial documents.
+
+## What this demonstrates
+
+- PDF ingestion and page-level metadata
+- Recursive chunking
+- OpenAI embeddings
+- FAISS retrieval for lightweight local development
+- Grounded LLM generation with source/page attribution
+- Streamlit UI
+- FastAPI service boundary
+- AWS Textract adapter for scanned/complex documents
+- OpenSearch adapter boundary for scalable vector search
+- Lightweight RAG evaluation hooks
+- Environment-based configuration
+- Security-conscious secret handling
+- Migration path from local prototype to cloud architecture
 
 ## Architecture
 
-PDFs → extraction → chunking + metadata → embeddings → FAISS retrieval → LLM → grounded answer + source/page citations
-
-## Features
-
-- Financial PDF ingestion with page metadata
-- Recursive chunking
-- OpenAI embeddings
-- Local FAISS vector retrieval
-- Configurable top-k retrieval
-- Grounded answers with source/page references
-- Streamlit interface
-- OpenSearch adapter boundary for production scaling
-- Environment-based configuration
-- Basic ingestion tests
-
-## Project structure
-
 ```
-financial-document-intelligence/
-├── app.py
-├── config.py
-├── ingestion.py
-├── rag.py
-├── opensearch_store.py
-├── requirements.txt
-├── .env.example
-├── .gitignore
-├── README.md
-└── tests/
-    └── test_ingestion.py
+Financial PDFs
+   |
+   v
+PDF / AWS Textract extraction
+   |
+   v
+Chunking + page metadata
+   |
+   v
+OpenAI embeddings
+   |
+   +--> FAISS (local)
+   |
+   +--> OpenSearch (production adapter)
+   |
+   v
+Top-k evidence
+   |
+   v
+LLM grounded prompt
+   |
+   v
+Answer + source/page citations
 ```
 
-## Run
+## Local development
+
+FAISS keeps the project lightweight enough for normal laptop development.
 
 ```bash
 cd financial-document-intelligence
 python -m venv .venv
 # Windows
 .venv\Scripts\activate
-# macOS/Linux
-source .venv/bin/activate
 pip install -r requirements.txt
 copy .env.example .env
 streamlit run app.py
 ```
 
-Add your OpenAI API key to `.env`. The local FAISS workflow does not require a separate vector database.
+API:
 
-## Production architecture
+```bash
+uvicorn api:app --reload
+```
 
-The project is structured so the local FAISS implementation can evolve toward:
+## Production direction
 
-- AWS S3 for document storage
-- AWS Textract for document extraction
-- Amazon OpenSearch Service for scalable vector retrieval
-- AKS/container deployment
-- LangSmith tracing and observability
-- Retrieval and generation evaluation
-- Human-in-the-loop review for sensitive financial workflows
+- **S3** for durable document storage
+- **AWS Textract** for scanned/complex documents
+- **OpenSearch** for scalable vector retrieval
+- **FastAPI** for service/API access
+- **AKS or another container platform** for deployment
+- **LangSmith** for tracing/observability
+- **Evaluation harness** for retrieval and answer quality
+- **Human-in-the-loop** review for sensitive financial workflows
+
+The AWS and OpenSearch integrations are deliberately explicit adapters/boundaries; this repository does not claim that those cloud services are already deployed.
+
+## Evaluation
+
+`evaluation.py` provides a lightweight structure for checking whether generated responses contain source references. It can be expanded with retrieval precision/recall, faithfulness, context relevance, citation correctness, latency, and cost metrics.
 
 ## Security
 
-Never commit `.env`, API keys, private financial documents, or generated vector indexes containing sensitive data.
+Never commit `.env`, API keys, private financial documents, customer data, or generated vector indexes containing sensitive information. Use IAM roles/managed identities rather than hard-coded cloud credentials.
 
-## Portfolio context
+## Portfolio talking points
 
-This project demonstrates practical RAG engineering across ingestion, chunking, embeddings, vector retrieval, grounded generation, source attribution, application UI, testing, and a production-oriented OpenSearch migration boundary.
+- FAISS versus managed OpenSearch trade-offs
+- PDF extraction versus Textract
+- Chunk size/top-k retrieval tuning
+- Grounding and citation requirements
+- Observability and evaluation
+- Separating the RAG engine from the UI/API
