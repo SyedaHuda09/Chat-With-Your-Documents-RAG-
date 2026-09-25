@@ -1,0 +1,18 @@
+{
+  "name": "AI Job Application Automation",
+  "nodes": [
+    {"parameters":{"httpMethod":"POST","path":"job-application","responseMode":"responseNode"},"id":"webhook","name":"Job Application Webhook","type":"n8n-nodes-base.webhook","typeVersion":2,"position":[-720,0],"webhookId":"job-application-demo"},
+    {"parameters":{"jsCode":"const body = $json.body ?? $json;\nconst job = String(body.job_description || '').trim();\nconst resume = String(body.resume || '').trim();\nif (!job) throw new Error('job_description is required');\nreturn [{json:{job_description:job,resume,requested_action:body.requested_action || 'analyze',timestamp:new Date().toISOString()}}];"},"id":"normalize","name":"Normalize Input","type":"n8n-nodes-base.code","typeVersion":2,"position":[-480,0]},
+    {"parameters":{"jsCode":"const text=$json.job_description.toLowerCase();\nconst skills=['python','llm','rag','langchain','openai','sql','docker','aws','azure','n8n','api','machine learning','nlp','agents','typescript','react'];\nconst matched=skills.filter(s=>text.includes(s));\nconst score=Math.min(98,35+matched.length*5);\nreturn [{json:{...$json,matched_skills:matched,fit_score:score,recommendation:score>=70?'Strong match':score>=50?'Potential match':'Low match'}}];"},"id":"score","name":"Job Fit Scorer","type":"n8n-nodes-base.code","typeVersion":2,"position":[-240,0]},
+    {"parameters":{"jsCode":"const matched=($json.matched_skills||[]).join(', ');\nconst letter='Dear Hiring Team,\\n\\nI am excited to apply for this opportunity. My background in AI application engineering includes Python, LLM/RAG systems, agent workflows, REST APIs and production-oriented automation.\\n\\nRelevant requirements identified in this role include: '+(matched||'AI application development')+'. I would welcome the opportunity to discuss how I can contribute to your team.\\n\\nBest regards,\\nHuda Mohsin';\nreturn [{json:{...$json,generated_cover_letter:letter,approval_required:true,status:'awaiting_human_approval'}}];"},"id":"generate","name":"Generate Draft Application","type":"n8n-nodes-base.code","typeVersion":2,"position":[0,0]},
+    {"parameters":{"respondWith":"json","responseBody":"={{ { success: true, status: $json.status, fit_score: $json.fit_score, recommendation: $json.recommendation, matched_skills: $json.matched_skills, generated_cover_letter: $json.generated_cover_letter, approval_required: true } }}"},"id":"response","name":"Return Draft","type":"n8n-nodes-base.respondToWebhook","typeVersion":1,"position":[260,0]}
+  ],
+  "connections":{
+    "Job Application Webhook":{"main":[[{"node":"Normalize Input","type":"main","index":0}]]},
+    "Normalize Input":{"main":[[{"node":"Job Fit Scorer","type":"main","index":0}]]},
+    "Job Fit Scorer":{"main":[[{"node":"Generate Draft Application","type":"main","index":0}]]},
+    "Generate Draft Application":{"main":[[{"node":"Return Draft","type":"main","index":0}]]}
+  },
+  "active":false,
+  "settings":{"executionOrder":"v1"}
+}
