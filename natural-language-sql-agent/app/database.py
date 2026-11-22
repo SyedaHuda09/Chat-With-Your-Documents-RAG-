@@ -17,6 +17,8 @@ def get_sql_database() -> SQLDatabase:
 
 
 def initialize_database() -> None:
+    if not os.getenv("DATABASE_URL"):
+        DEFAULT_DB.parent.mkdir(parents=True, exist_ok=True)
     engine = get_engine()
     with engine.begin() as connection:
         connection.execute(text("""
