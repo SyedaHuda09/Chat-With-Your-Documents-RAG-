@@ -1,30 +1,31 @@
-# DocuMind — Chat With Your Documents (RAG)
+# AI Engineering Portfolio — Huda Mohsin
 
-Ask natural-language questions over a set of PDFs and get grounded answers with source citations, 
-built with LangChain, OpenAI/Hugging Face embeddings, and FAISS.
+A collection of practical projects focused on **Generative AI, agentic workflows, Retrieval-Augmented Generation (RAG), document intelligence, and backend APIs**.
 
-## Why I built this
-[1-2 sentences: e.g. "To apply production RAG patterns I used professionally at PixelEdge Solutions 
-in a fully open, demonstrable project."]
+The repositories are structured as demonstrable portfolio projects. Each README distinguishes implemented local functionality from optional cloud integrations or future production work.
 
-## Demo
-🔗 [Live demo on Hugging Face Spaces](link)
-![demo](docs/demo.gif)
+## Featured projects
 
-## Architecture
-User question → retriever (FAISS, top-k) → LLM (OpenAI/HF) grounded in retrieved chunks → answer + source
+| Project | Focus | Technologies |
+|---|---|---|
+| [Multi-Agent Medical Staffing & Shift Allocation](https://github.com/SyedaHuda09/medical-staffing-multi-agent) | Explainable staffing allocation pipeline, specialist agents, constraints, and REST API | Python, Pydantic, FastAPI, PyTest |
+| [Financial Document Intelligence RAG](financial-document-intelligence/) | PDF ingestion, chunking, grounded retrieval, source/page attribution, and service boundaries | Python, LangChain, OpenAI, FAISS, Textract adapter, OpenSearch adapter |
+| [Agentic Financial Research Copilot](agentic-financial-research-copilot/) | Agent routing across retrieval and deterministic calculation tools, with grounded answers | Python, tool calling, RAG, FastAPI |
+| [Natural Language SQL Agent](natural-language-sql-agent/) | Natural-language-to-SQL generation with a read-only validation layer and API | Python, LangChain, SQLAlchemy, SQLite, FastAPI, PyTest |
+| [Job Application Automation](job-application-automation/) | Workflow automation for job-application tracking | n8n |
 
-## Tech stack
-Python · LangChain · OpenAI/Hugging Face · FAISS · Streamlit · PyTest
+## Core areas
 
-## Setup
-```bash
-git clone ...
-pip install -r requirements.txt
-streamlit run app.py
-```
+- Python backend and REST API development
+- LLM integration, tool calling, and agent workflows
+- Retrieval-Augmented Generation and document processing
+- SQL generation and structured data access
+- Testing, validation, and responsible handling of sensitive data
 
-## What I'd improve next
-- [ ] Add re-ranking for better retrieval precision
-- [ ] Swap FAISS for OpenSearch for scale
-- [ ] Add evaluation harness (faithfulness / relevance scoring)
+## Running the projects
+
+Each project has its own README and dependency file. Follow the instructions in the relevant project directory.
+
+## Responsible use
+
+Projects use synthetic/demo data. Do not upload private documents, credentials, customer records, medical data, or other sensitive information. Cloud adapters and deployment paths are identified explicitly; they should not be interpreted as proof of a live cloud deployment.
